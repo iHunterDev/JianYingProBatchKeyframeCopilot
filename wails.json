@@ -1,0 +1,13 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "jianyingpro-batch-keyframe-copilot",
+  "outputfilename": "jianyingpro-batch-keyframe-copilot",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "iHunterDev",
+    "email": "wcgcodes@gmail.com"
+  }
+}
