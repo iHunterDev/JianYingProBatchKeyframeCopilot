@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"net/http"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx        context.Context
+	httpServer *http.Server
 }
 
 // NewApp creates a new App application struct
@@ -22,6 +25,15 @@ func (a *App) startup(ctx context.Context) {
 }
 
 // Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time! ", name)
+// func (a *App) Greet(name string) string {
+// 	return fmt.Sprintf("Hello %s, It's show time! ", name)
+// }
+
+// SelectedDirectory 选择目录
+func (a *App) SelectedDirectory() (string, error) {
+	dialog, _ := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{})
+	if dialog == "" {
+		return "", nil // 用户取消了对话框
+	}
+	return dialog, nil
 }

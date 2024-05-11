@@ -18,8 +18,8 @@ func main() {
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "jianyingpro-batch-keyframe-copilot",
-		Width:  1024,
-		Height: 768,
+		Width:  375,
+		Height: 667,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},

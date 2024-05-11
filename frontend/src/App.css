@@ -1,4 +1,3 @@
-#app {
-    height: 100vh;
-    text-align: center;
+.mockup-code::before {
+  display: none;
 }
