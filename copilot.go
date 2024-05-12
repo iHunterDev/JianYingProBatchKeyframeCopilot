@@ -1,12 +1,20 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+
+	"encoding/json"
 
 	"github.com/rs/cors"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
+
+type Log struct {
+	Type    string `json:"type"`
+	Message string `json:"message"`
+}
 
 func (a *App) loggingMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
@@ -15,6 +23,18 @@ func (a *App) loggingMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		log.Printf("Received request: %s %s", r.Method, r.URL.Path)
 		// 调用下一个处理器
 		next(w, r)
+
+		// json 格式的日志
+		log := Log{
+			Type:    "log",
+			Message: r.Method + " " + r.URL.Path,
+		}
+		jsonData, err := json.Marshal(log)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		runtime.EventsEmit(a.ctx, "logs", string(jsonData))
 	}
 }
 
@@ -23,11 +43,7 @@ func (a *App) StartHTTPServer() error {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", a.loggingMiddleware(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, World!"))
-
-		// json 格式的日志
-		runtime.EventsEmit(a.ctx, "logs", `{"type":"log","message":"Hello, World!"}`)
-
+		w.Write([]byte("Hello, My Friend!\nThis is the JianyingPro Batch Keyframe Copilot Server.\nPlease visit https://github.com/iHunterDev/JianYingProBatchKeyframeCopilot"))
 	}))
 
 	// 创建 CORS 处理器
