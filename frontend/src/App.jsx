@@ -46,6 +46,20 @@ function App() {
     setRunningState(false);
     localStorage.setItem("runningState", false);
   };
+  useEffect(() => {
+    const fetchRunningState = async () => {
+      try {
+        const response = await fetch("http://localhost:8080");
+        await response.text();
+        updateRunning();
+      } catch (error) {
+        console.log(error);
+        updateStopped();
+      }
+    };
+
+    fetchRunningState();
+  }, []);
 
   // Start the HTTP server
   const startHandle = () => {
