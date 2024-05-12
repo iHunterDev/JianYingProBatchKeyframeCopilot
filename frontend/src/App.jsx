@@ -177,6 +177,8 @@ function App() {
           </pre>
         ))}
       </div>
+
+      <p className="mt-9 text-center text-xs text-gray-400">Copyright © 2024 - All right reserved by @iHunterDev</p>
     </div>
   );
 }
