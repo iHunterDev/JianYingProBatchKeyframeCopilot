@@ -15,7 +15,7 @@ func (a *App) StartHTTPServer() error {
 
 	// 创建 CORS 处理器
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
+		AllowedOrigins:   config.CsrfDomains,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type", "Authorization"},
 		ExposedHeaders:   []string{"Link"},
@@ -24,7 +24,7 @@ func (a *App) StartHTTPServer() error {
 	})
 
 	a.httpServer = &http.Server{
-		Addr:    ":8080",
+		Addr:    config.Port,
 		Handler: corsHandler.Handler(mux),
 	}
 
@@ -36,6 +36,7 @@ func (a *App) StartHTTPServer() error {
 	}()
 
 	log.Println("Server started. Press Ctrl+C to stop.")
+	log.Println("👉 Local:   http://localhost" + config.Port)
 
 	return nil
 }

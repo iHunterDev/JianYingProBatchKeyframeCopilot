@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -47,15 +48,8 @@ func (a *App) HandleHome(mux *http.ServeMux) {
 
 func (a *App) HandleDrafts(mux *http.ServeMux) {
 	mux.HandleFunc("/api/v1/drafts", a.loggingMiddleware(func(w http.ResponseWriter, r *http.Request) {
-		// w.Write([]byte("This is the API for keyframe."))
-
-		// 读取 drafts 列表
-		// 读取本地文件夹下的目录
-		// /Users/wenzhuo/Movies/JianyingPro/User Data/Projects/com.lveditor.draft
-
 		// 读取 drafts 信息
-		// /Users/wenzhuo/Movies/JianyingPro/User Data/Projects/com.lveditor.draft/root_meta_info.json
-		file, err := os.Open("/Users/wenzhuo/Movies/JianyingPro/User Data/Projects/com.lveditor.draft/root_meta_info.json")
+		file, err := os.Open(path.Join(config.DraftRootPath, "root_meta_info.json"))
 		if err != nil {
 			fmt.Println("无法打开文件:", err)
 			return
@@ -77,11 +71,6 @@ func (a *App) HandleDrafts(mux *http.ServeMux) {
 			return
 		}
 
-		// 输出 drafts 列表
-		// for _, draft := range metaInfo.AllDraftStore {
-		// 	fmt.Println(draft.DraftName)
-		// }
-
 		w.Header().Set("Content-Type", "application/json")
 		response := Response{
 			Code:    0,
@@ -101,7 +90,8 @@ func (a *App) HandleDraft(mux *http.ServeMux) {
 	mux.HandleFunc("/api/v1/draft/info", a.loggingMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		// 读取 draft 信息
 		draftName := r.URL.Query().Get("draft_name")
-		file, err := os.Open("/Users/wenzhuo/Movies/JianyingPro/User Data/Projects/com.lveditor.draft/" + draftName + "/draft_info.json")
+		// file, err := os.Open("/Users/wenzhuo/Movies/JianyingPro/User Data/Projects/com.lveditor.draft/" + draftName + "/draft_info.json")
+		file, err := os.Open(path.Join(config.DraftRootPath, draftName, "draft_info.json"))
 		if err != nil {
 			fmt.Println("无法打开文件:", err)
 			return
