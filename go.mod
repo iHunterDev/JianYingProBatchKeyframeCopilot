@@ -5,6 +5,7 @@ go 1.21
 toolchain go1.22.1
 
 require (
+	github.com/adrg/xdg v0.4.0
 	github.com/rs/cors v1.11.0
 	github.com/wailsapp/wails/v2 v2.8.2
 )
