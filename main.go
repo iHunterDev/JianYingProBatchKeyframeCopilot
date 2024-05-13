@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -15,12 +16,31 @@ var assets embed.FS
 //go:embed build/appicon.png
 var icon []byte
 
+var configStore *ConfigStore
+var config Config
+
 func main() {
+	var err error
+	// load config
+	configStore, err = NewConfigStore()
+	if err != nil {
+		fmt.Printf("could not initialize the config store: %v\n", err)
+		return
+	}
+	fmt.Println(configStore.configPath)
+	config, err = configStore.Config()
+	if err != nil {
+		fmt.Printf("could not retrieve the configuration: %v\n", err)
+		return
+	}
+
+	fmt.Printf("config: %v\n", config)
+
 	// Create an instance of the app structure
 	app := NewApp()
 
 	// Create application with options
-	err := wails.Run(&options.App{
+	err = wails.Run(&options.App{
 		Title:  "JianyingPro Batch Keyframe Copilot",
 		Width:  375,
 		Height: 667,
