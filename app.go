@@ -37,3 +37,14 @@ func (a *App) SelectedDirectory() (string, error) {
 	}
 	return dialog, nil
 }
+
+// 设置草稿根目录
+func (a *App) SetDraftRootPath(draftRootPath string) (string, error) {
+	config.DraftRootPath = draftRootPath
+	err := configStore.SaveConfig(config)
+
+	if err != nil {
+		return "", err
+	}
+	return draftRootPath, nil
+}

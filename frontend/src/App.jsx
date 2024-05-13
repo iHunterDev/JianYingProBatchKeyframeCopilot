@@ -3,6 +3,7 @@ import {
   SelectedDirectory,
   StartHTTPServer,
   StopHTTPServer,
+  SetDraftRootPath,
 } from "../wailsjs/go/main/App";
 import { EventsOn, EventsOff } from "../wailsjs/runtime/runtime";
 import Swal from "sweetalert2";
@@ -15,8 +16,19 @@ function App() {
   );
   const updateDraftsFolder = (e) => {
     setDraftsFolder(e.target.value);
-    localStorage.setItem("draftsFolder", e.target.value);
   };
+  useEffect(() => {
+    localStorage.setItem("draftsFolder", draftsFolder);
+    SetDraftRootPath(draftsFolder).then(() => {
+      console.log("Drafts folder updated successfully");
+    }).catch((err) => {
+      Swal.fire({
+        title: "Oops...",
+        text: "Error updating drafts folder: " + err,
+        icon: "error",
+      });
+    });
+  }, [draftsFolder])
 
   // Open the directory dialog box
   const selectedDirectoryHandle = () => {
@@ -24,7 +36,6 @@ function App() {
       .then((path) => {
         console.log(path);
         setDraftsFolder(path);
-        localStorage.setItem("draftsFolder", path);
       })
       .catch((err) => {
         Swal.fire({

@@ -12,6 +12,8 @@ export function HandleHome(arg1:http.ServeMux):Promise<void>;
 
 export function SelectedDirectory():Promise<string>;
 
+export function SetDraftRootPath(arg1:string):Promise<string>;
+
 export function StartHTTPServer():Promise<void>;
 
 export function StopHTTPServer():Promise<void>;
