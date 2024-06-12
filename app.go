@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -47,4 +49,18 @@ func (a *App) SetDraftRootPath(draftRootPath string) (string, error) {
 		return "", err
 	}
 	return draftRootPath, nil
+}
+
+func (a *App) SendLogsToPage(message string) {
+	// json 格式的日志
+	log := Log{
+		Type:    "log",
+		Message: message,
+	}
+	jsonData, err := json.Marshal(log)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	runtime.EventsEmit(a.ctx, "logs", string(jsonData))
 }

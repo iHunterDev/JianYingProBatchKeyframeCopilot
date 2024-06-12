@@ -22,6 +22,10 @@ export function SelectedDirectory() {
   return window['go']['main']['App']['SelectedDirectory']();
 }
 
+export function SendLogsToPage(arg1) {
+  return window['go']['main']['App']['SendLogsToPage'](arg1);
+}
+
 export function SetDraftRootPath(arg1) {
   return window['go']['main']['App']['SetDraftRootPath'](arg1);
 }

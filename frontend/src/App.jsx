@@ -203,7 +203,7 @@ function App() {
         ))}
       </div>
 
-      <p className="mt-9 text-center text-xs text-gray-400">Copyright © 2024 - All right reserved by @iHunterDev</p>
+      <p className="mt-9 text-center text-xs text-gray-400">Copyright © 2024 - All right reserved by <a href="https://x.com/iHunterDev" target="_blank">@iHunterDev</a></p>
     </div>
   );
 }

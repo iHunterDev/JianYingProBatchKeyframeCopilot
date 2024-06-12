@@ -38,6 +38,9 @@ func (a *App) StartHTTPServer() error {
 	log.Println("Server started. Press Ctrl+C to stop.")
 	log.Println("👉 Local:   http://localhost" + config.Port)
 
+	a.SendLogsToPage("Server started. ")
+	a.SendLogsToPage("👉 http://localhost" + config.Port)
+	a.SendLogsToPage("Use the browser open https://keyframeai.top/copilot/dashboard")
 	return nil
 }
 

@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 func (a *App) HandleFuncWarp(mux *http.ServeMux) {
@@ -26,17 +24,7 @@ func (a *App) loggingMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		// 调用下一个处理器
 		next(w, r)
 
-		// json 格式的日志
-		log := Log{
-			Type:    "log",
-			Message: r.Method + " " + r.URL.Path,
-		}
-		jsonData, err := json.Marshal(log)
-		if err != nil {
-			fmt.Println("Error:", err)
-			return
-		}
-		runtime.EventsEmit(a.ctx, "logs", string(jsonData))
+		a.SendLogsToPage(r.Method + " " + r.URL.Path)
 	}
 }
 
