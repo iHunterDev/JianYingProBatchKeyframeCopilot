@@ -87,27 +87,74 @@ func (a *App) HandleDrafts(mux *http.ServeMux) {
 }
 
 func (a *App) HandleDraft(mux *http.ServeMux) {
-	mux.HandleFunc("/api/v1/draft/info", a.loggingMiddleware(func(w http.ResponseWriter, r *http.Request) {
-		// 读取 draft 信息
-		draftPath := r.URL.Query().Get("draft_json_file")
-		file, err := os.Open(draftPath)
-		if err != nil {
-			fmt.Println("无法打开文件:", err)
-			return
-		}
-		defer file.Close()
+	mux.HandleFunc("/api/v1/draft", a.loggingMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		// 读取请求方式
+		method := r.Method
 
-		// 读取文件内容
-		content, err := io.ReadAll(file)
-		if err != nil {
-			fmt.Println("无法读取文件内容:", err)
-			return
+		// 判断请求方式
+		if method == "GET" {
+			DraftInfoAction(w, r)
+		} else if method == "POST" {
+			DraftSaveAction(w, r)
 		}
-
-		// 输出 draft 信息
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{"code":0,"message":"success","data":{"draft_json_file":"` + draftPath + `","draft_info":` + string(content) + `}}`))
 	}))
+}
+
+// 草稿信息读取操作
+func DraftInfoAction(w http.ResponseWriter, r *http.Request) {
+	// 读取 draft 信息
+	draftPath := r.URL.Query().Get("draft_json_file")
+	file, err := os.Open(draftPath)
+	if err != nil {
+		fmt.Println("无法打开文件:", err)
+		return
+	}
+	defer file.Close()
+
+	// 读取文件内容
+	content, err := io.ReadAll(file)
+	if err != nil {
+		fmt.Println("无法读取文件内容:", err)
+		return
+	}
+
+	// 输出 draft 信息
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte(`{"code":0,"message":"success","data":{"draft_json_file":"` + draftPath + `","draft_info":` + string(content) + `}}`))
+}
+
+// 草稿信息保存操作
+func DraftSaveAction(w http.ResponseWriter, r *http.Request) {
+	// 读取 draft 信息
+	// 去读请求的 body json 格式数据
+	type DraftSaveRequest struct {
+		DraftJSONFile string                 `json:"draft_json_file"`
+		DraftInfo     map[string]interface{} `json:"draft_info"`
+	}
+	var data DraftSaveRequest
+	err := json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		fmt.Println("无法解析 JSON 数据:", err)
+		return
+	}
+
+	// 把数据转换为 json 字符串
+	jsonData, err := json.Marshal(data.DraftInfo)
+	if err != nil {
+		fmt.Println("无法转换为 json 字符串:", err)
+		return
+	}
+
+	// 写入文件
+	err = os.WriteFile(data.DraftJSONFile, jsonData, 0644)
+	if err != nil {
+		fmt.Println("无法写入文件:", err)
+		return
+	}
+
+	// 输出 draft 信息
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte(`{"code":0,"message":"success","data":{"draft_json_file":"` + data.DraftJSONFile + `"}}`))
 }
 
 //+--------
