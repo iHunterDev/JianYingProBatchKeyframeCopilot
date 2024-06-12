@@ -89,9 +89,8 @@ func (a *App) HandleDrafts(mux *http.ServeMux) {
 func (a *App) HandleDraft(mux *http.ServeMux) {
 	mux.HandleFunc("/api/v1/draft/info", a.loggingMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		// 读取 draft 信息
-		draftName := r.URL.Query().Get("draft_name")
-		// file, err := os.Open("/Users/wenzhuo/Movies/JianyingPro/User Data/Projects/com.lveditor.draft/" + draftName + "/draft_info.json")
-		file, err := os.Open(path.Join(config.DraftRootPath, draftName, "draft_info.json"))
+		draftPath := r.URL.Query().Get("draft_json_file")
+		file, err := os.Open(draftPath)
 		if err != nil {
 			fmt.Println("无法打开文件:", err)
 			return
@@ -107,7 +106,7 @@ func (a *App) HandleDraft(mux *http.ServeMux) {
 
 		// 输出 draft 信息
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{"code":0,"message":"success","data":{"draft_name":"` + draftName + `","draft_info":` + string(content) + `}}`))
+		w.Write([]byte(`{"code":0,"message":"success","data":{"draft_json_file":"` + draftPath + `","draft_info":` + string(content) + `}}`))
 	}))
 }
 
