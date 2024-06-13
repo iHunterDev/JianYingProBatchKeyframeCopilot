@@ -6,7 +6,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/adrg/xdg"
 )
@@ -15,20 +14,13 @@ type Config struct {
 	Port          string   `json:"port"`            // http服务端口
 	CsrfDomains   []string `json:"csrf_domain"`     // CSRF 域名列表
 	DraftRootPath string   `json:"draft_root_path"` // 草稿根目录
-	DraftInfoName string   `json:"draft_info_name"` // 草稿信息文件名
 }
 
 func DefaultConfig() Config {
 	defaultConfig := Config{
-		Port:          ":8080",
+		Port:          ":9507",
 		CsrfDomains:   []string{"keyframeai.top"},
 		DraftRootPath: "",
-		DraftInfoName: "",
-	}
-	if runtime.GOOS == "windows" {
-		defaultConfig.DraftInfoName = "draft_content.json"
-	} else if runtime.GOOS == "darwin" {
-		defaultConfig.DraftInfoName = "draft_info.json"
 	}
 
 	return defaultConfig
