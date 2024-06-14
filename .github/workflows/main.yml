@@ -24,7 +24,7 @@ jobs:
           path: ./build/bin/*.exe
           name: windows
 
-  build_macos:
+  build_macos_amd64:
     runs-on: macos-latest
     steps:
       - name: Checkout code
@@ -39,16 +39,39 @@ jobs:
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
-          path: ./build/bin/*.app.zip
-          name: macos
+          path: ./build/bin/*
+          name: macos_amd64
+  build_macos_arm64:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build Copilot for macOS
+        uses: dAppServer/wails-build-action@v2.2
+        with:
+          build-name: jianyingpro-batch-keyframe-copilot
+          build-platform: darwin/arm64
+          package: false
+          codesign: false
+      - name: upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: ./build/bin/*
+          name: macos_arm64
   upload:
-    needs: [build_windows, build_macos]
+    needs: [build_windows, build_macos_amd64, build_macos_arm64]
     runs-on: ubuntu-latest
     steps:
       - name: download artifact
         uses: actions/download-artifact@v4.1.7
       - name: show tree
         run: ls -R
+      - name: compress macos
+        run: |
+          cd macos_amd64
+          zip -r jianyingpro-batch-keyframe-copilot.zip jianyingpro-batch-keyframe-copilot.app
+          cd ../macos_arm64
+          zip -r jianyingpro-batch-keyframe-copilot.zip jianyingpro-batch-keyframe-copilot.app
       - name: Upload Windows Copilot
         uses: ckylinmc/minio-upload-action@v1.2
         with:
@@ -58,12 +81,21 @@ jobs:
           accesskey: ${{ secrets.ACCESSKEY }}
           secretkey: ${{ secrets.SECRETKEY }}
           endpoint: ${{ secrets.ENDPOINT }}
-      - name: Upload MacOS Copilot
+      - name: Upload MacOS AMD64 Copilot
         uses: ckylinmc/minio-upload-action@v1.2
         with:
-          source: ./macos/jianyingpro-batch-keyframe-copilot.app.zip
+          source: ./macos_amd64/jianyingpro-batch-keyframe-copilot.zip
           bucketname: ${{ secrets.BUCKET }}
-          dest: /jianyingpro-batch-keyframe-copilot/macos/jianyingpro-batch-keyframe-copilot.app.zip
+          dest: /jianyingpro-batch-keyframe-copilot/macos/jianyingpro-batch-keyframe-copilot_amd64.zip
+          accesskey: ${{ secrets.ACCESSKEY }}
+          secretkey: ${{ secrets.SECRETKEY }}
+          endpoint: ${{ secrets.ENDPOINT }}
+      - name: Upload MacOS ARM64 Copilot
+        uses: ckylinmc/minio-upload-action@v1.2
+        with:
+          source: ./macos_arm64/jianyingpro-batch-keyframe-copilot.zip
+          bucketname: ${{ secrets.BUCKET }}
+          dest: /jianyingpro-batch-keyframe-copilot/macos/jianyingpro-batch-keyframe-copilot_arm64.zip
           accesskey: ${{ secrets.ACCESSKEY }}
           secretkey: ${{ secrets.SECRETKEY }}
           endpoint: ${{ secrets.ENDPOINT }}
