@@ -1,0 +1,69 @@
+name: Wails Build
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build Copilot for Windows
+        uses: dAppServer/wails-build-action@v2.2
+        with:
+          build-name: jianyingpro-batch-keyframe-copilot
+          build-platform: windows/amd64
+          package: false
+          nsis: true
+      - name: show tree
+        run: ls -R
+      - name: upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: ./build/bin/*.exe
+          name: windows
+
+  build_macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build Copilot for macOS
+        uses: dAppServer/wails-build-action@v2.2
+        with:
+          build-name: jianyingpro-batch-keyframe-copilot
+          build-platform: darwin/amd64
+          package: false
+          codesign: false
+      - name: upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: ./build/bin/*.app.zip
+          name: macos
+  upload:
+    needs: [build_windows, build_macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: download artifact
+        uses: actions/download-artifact@v4.1.7
+      - name: show tree
+        run: ls -R
+      - name: Upload Windows Copilot
+        uses: ckylinmc/minio-upload-action@v1.2
+        with:
+          source: ./windows/jianyingpro-batch-keyframe-copilot-amd64-installer.exe
+          bucketname: ${{ secrets.BUCKET }}
+          dest: /jianyingpro-batch-keyframe-copilot/windows/jianyingpro-batch-keyframe-copilot-amd64-installer.exe
+          accesskey: ${{ secrets.ACCESSKEY }}
+          secretkey: ${{ secrets.SECRETKEY }}
+          endpoint: ${{ secrets.ENDPOINT }}
+      - name: Upload MacOS Copilot
+        uses: ckylinmc/minio-upload-action@v1.2
+        with:
+          source: ./macos/jianyingpro-batch-keyframe-copilot.app.zip
+          bucketname: ${{ secrets.BUCKET }}
+          dest: /jianyingpro-batch-keyframe-copilot/macos/jianyingpro-batch-keyframe-copilot.app.zip
+          accesskey: ${{ secrets.ACCESSKEY }}
+          secretkey: ${{ secrets.SECRETKEY }}
+          endpoint: ${{ secrets.ENDPOINT }}
