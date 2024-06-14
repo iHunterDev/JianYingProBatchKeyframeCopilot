@@ -193,9 +193,6 @@ function App() {
         className="mockup-code mt-10 h-80 overflow-y-auto text-xs"
         ref={logContainerRef}
       >
-        <pre data-prefix=">">
-          <code>日志输出</code>
-        </pre>
         {logs.map((log, index) => (
           <pre data-prefix=">" key={index}>
             <code>{log}</code>
