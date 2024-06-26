@@ -19,7 +19,7 @@ type Config struct {
 func DefaultConfig() Config {
 	defaultConfig := Config{
 		Port:          ":9507",
-		CsrfDomains:   []string{"keyframeai.top"},
+		CsrfDomains:   []string{"https://keyframeai.top"},
 		DraftRootPath: "",
 	}
 
@@ -27,7 +27,8 @@ func DefaultConfig() Config {
 }
 
 type ConfigStore struct {
-	configPath string
+	configPath     string
+	currentVersion string
 }
 
 func NewConfigStore() (*ConfigStore, error) {
@@ -36,12 +37,24 @@ func NewConfigStore() (*ConfigStore, error) {
 		return nil, fmt.Errorf("could not resolve path for config file: %w", err)
 	}
 	return &ConfigStore{
-		configPath: configFilePath,
+		configPath:     configFilePath,
+		currentVersion: "0.1.1",
 	}, nil
 }
 
 func (s *ConfigStore) Config() (Config, error) {
-	_, err := os.Stat(s.configPath)
+	// Reload the default configuration file if the version is upgraded
+	versionLockFilePath := filepath.Join(filepath.Dir(s.configPath), s.currentVersion)
+	_, err := os.Stat(versionLockFilePath)
+	if os.IsNotExist(err) {
+		// create a file
+		os.Create(versionLockFilePath)
+		s.SaveConfig(DefaultConfig())
+		return DefaultConfig(), nil
+	}
+
+	// Create a default configuration file if the file does not exist
+	_, err = os.Stat(s.configPath)
 	if os.IsNotExist(err) {
 		s.SaveConfig(DefaultConfig())
 		return DefaultConfig(), nil

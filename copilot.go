@@ -17,8 +17,7 @@ func (a *App) StartHTTPServer() error {
 	corsHandler := cors.New(cors.Options{
 		AllowedOrigins:   config.CsrfDomains,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Content-Type", "Authorization"},
-		ExposedHeaders:   []string{"Link"},
+		AllowedHeaders:   []string{"*"},
 		AllowCredentials: true,
 		MaxAge:           300,
 	})

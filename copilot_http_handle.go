@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 )
 
 func (a *App) HandleFuncWarp(mux *http.ServeMux) {
@@ -106,6 +107,8 @@ func DraftInfoAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 修复再 window 下的路径问题
+	draftPath = strings.Replace(draftPath, "\\", "\\\\", -1)
 	// 输出 draft 信息
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte(`{"code":0,"message":"success","data":{"draft_json_file":"` + draftPath + `","draft_info":` + string(content) + `}}`))
@@ -140,9 +143,11 @@ func DraftSaveAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 修复再 window 下的路径问题
+	draftPath := strings.Replace(data.DraftJSONFile, "\\", "\\\\", -1)
 	// 输出 draft 信息
 	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(`{"code":0,"message":"success","data":{"draft_json_file":"` + data.DraftJSONFile + `"}}`))
+	w.Write([]byte(`{"code":0,"message":"success","data":{"draft_json_file":"` + draftPath + `"}}`))
 }
 
 //+--------
