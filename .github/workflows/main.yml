@@ -73,29 +73,29 @@ jobs:
           cd ../macos_arm64
           zip -r jianyingpro-batch-keyframe-copilot.zip jianyingpro-batch-keyframe-copilot.app
       - name: Upload Windows Copilot
-        uses: ckylinmc/minio-upload-action@v1.2
+        uses: ryand56/r2-upload-action@latest
         with:
-          source: ./windows/jianyingpro-batch-keyframe-copilot-amd64-installer.exe
-          bucketname: ${{ secrets.BUCKET }}
-          dest: /jianyingpro-batch-keyframe-copilot/windows/jianyingpro-batch-keyframe-copilot-amd64-installer.exe
-          accesskey: ${{ secrets.ACCESSKEY }}
-          secretkey: ${{ secrets.SECRETKEY }}
-          endpoint: ${{ secrets.ENDPOINT }}
+          r2-account-id: ${{ secrets.ACCOUNTID }}
+          r2-access-key-id: ${{ secrets.ACCESSKEY }}
+          r2-secret-access-key: ${{ secrets.SECRETKEY }}
+          r2-bucket: ${{ secrets.BUCKET }}
+          source-dir: ./windows
+          destination-dir: jianyingpro-batch-keyframe-copilot/windows/prod/x64
       - name: Upload MacOS AMD64 Copilot
-        uses: ckylinmc/minio-upload-action@v1.2
+        uses: ryand56/r2-upload-action@latest
         with:
-          source: ./macos_amd64/jianyingpro-batch-keyframe-copilot.zip
-          bucketname: ${{ secrets.BUCKET }}
-          dest: /jianyingpro-batch-keyframe-copilot/macos/jianyingpro-batch-keyframe-copilot_amd64.zip
-          accesskey: ${{ secrets.ACCESSKEY }}
-          secretkey: ${{ secrets.SECRETKEY }}
-          endpoint: ${{ secrets.ENDPOINT }}
+          r2-account-id: ${{ secrets.ACCOUNTID }}
+          r2-access-key-id: ${{ secrets.ACCESSKEY }}
+          r2-secret-access-key: ${{ secrets.SECRETKEY }}
+          r2-bucket: ${{ secrets.BUCKET }}
+          source-dir: ./macos_amd64
+          destination-dir: jianyingpro-batch-keyframe-copilot/macos/prod/amd64
       - name: Upload MacOS ARM64 Copilot
-        uses: ckylinmc/minio-upload-action@v1.2
+        uses: ryand56/r2-upload-action@latest
         with:
-          source: ./macos_arm64/jianyingpro-batch-keyframe-copilot.zip
-          bucketname: ${{ secrets.BUCKET }}
-          dest: /jianyingpro-batch-keyframe-copilot/macos/jianyingpro-batch-keyframe-copilot_arm64.zip
-          accesskey: ${{ secrets.ACCESSKEY }}
-          secretkey: ${{ secrets.SECRETKEY }}
-          endpoint: ${{ secrets.ENDPOINT }}
+          r2-account-id: ${{ secrets.ACCOUNTID }}
+          r2-access-key-id: ${{ secrets.ACCESSKEY }}
+          r2-secret-access-key: ${{ secrets.SECRETKEY }}
+          r2-bucket: ${{ secrets.BUCKET }}
+          source-dir: ./macos_arm64
+          destination-dir: jianyingpro-batch-keyframe-copilot/macos/prod/arm64
