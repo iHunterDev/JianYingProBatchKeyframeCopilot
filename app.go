@@ -5,6 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
+
+	osruntime "runtime"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -49,6 +53,36 @@ func (a *App) SetDraftRootPath(draftRootPath string) (string, error) {
 		return "", err
 	}
 	return draftRootPath, nil
+}
+
+// 自动检测草稿目录
+func (a *App) AutoDetectDraftRootPath() (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("无法获取用户主目录: %w", err)
+	}
+
+	var draftPath string
+	switch osruntime.GOOS {
+	case "darwin":
+		draftPath = filepath.Join(homeDir, "Movies", "JianyingPro", "User Data", "Projects", "com.lveditor.draft")
+	case "windows":
+		draftPath = filepath.Join(homeDir, "AppData", "Local", "JianyingPro", "User Data", "Projects")
+	default:
+		return "", fmt.Errorf("不支持的操作系统: %s", osruntime.GOOS)
+	}
+
+	// 检查目录是否存在，并且包含 root_meta_info.json 文件
+	if _, err := os.Stat(draftPath); os.IsNotExist(err) {
+		return "", fmt.Errorf("草稿目录不存在: %s", draftPath)
+	}
+
+	rootMetaInfoPath := filepath.Join(draftPath, "root_meta_info.json")
+	if _, err := os.Stat(rootMetaInfoPath); os.IsNotExist(err) {
+		return "", fmt.Errorf("草稿目录无效，缺少 root_meta_info.json 文件: %s", draftPath)
+	}
+
+	return draftPath, nil
 }
 
 func (a *App) SendLogsToPage(message string) {

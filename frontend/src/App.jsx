@@ -4,6 +4,7 @@ import {
   StartHTTPServer,
   StopHTTPServer,
   SetDraftRootPath,
+  AutoDetectDraftRootPath,
 } from "../wailsjs/go/main/App";
 import { EventsOn, EventsOff } from "../wailsjs/runtime/runtime";
 import Swal from "sweetalert2";
@@ -32,18 +33,59 @@ function App() {
 
   // Open the directory dialog box
   const selectedDirectoryHandle = () => {
-    SelectedDirectory()
-      .then((path) => {
-        console.log(path);
-        setDraftsFolder(path);
-      })
-      .catch((err) => {
-        Swal.fire({
-          title: "Oops...",
-          text: "Error opening directory dialog box:" + err,
-          icon: "error",
-        });
+
+    // 自动检测草稿目录
+    AutoDetectDraftRootPath().then((path) => {
+      // console.log(path);
+      // setDraftsFolder(path);
+      // Swal.fire({
+      //   title: "Drafts folder detected",
+      //   text: "Drafts folder detected: " + path,
+      //   icon: "success",
+      // });
+
+      // 提示用户已经自动检测到地址，是否直接使用
+      Swal.fire({
+        title: "Drafts folder detected",
+        text: "Drafts folder detected: " + path,
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonText: "Yes, use this folder",
+        cancelButtonText: "No, select another folder",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          setDraftsFolder(path);
+        } else {
+          SelectedDirectory()
+            .then((path) => {
+              console.log(path);
+              setDraftsFolder(path);
+            })
+            .catch((err) => {
+              Swal.fire({
+                title: "Oops...",
+                text: "Error opening directory dialog box:" + err,
+                icon: "error",
+              });
+            });
+        }
       });
+    }).catch((err) => {
+      SelectedDirectory()
+        .then((path) => {
+          console.log(path);
+          setDraftsFolder(path);
+        })
+        .catch((err) => {
+          Swal.fire({
+            title: "Oops...",
+            text: "Error opening directory dialog box:" + err,
+            icon: "error",
+          });
+        });
+    });
+
+
   };
 
   const [runningState, setRunningState] = useState(
