@@ -67,7 +67,7 @@ func (a *App) AutoDetectDraftRootPath() (string, error) {
 	case "darwin":
 		draftPath = filepath.Join(homeDir, "Movies", "JianyingPro", "User Data", "Projects", "com.lveditor.draft")
 	case "windows":
-		draftPath = filepath.Join(homeDir, "AppData", "Local", "JianyingPro", "User Data", "Projects")
+		draftPath = filepath.Join(homeDir, "AppData", "Local", "JianyingPro", "User Data", "Projects", "com.lveditor.draft")
 	default:
 		return "", fmt.Errorf("不支持的操作系统: %s", osruntime.GOOS)
 	}
