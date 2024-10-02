@@ -243,7 +243,7 @@ function App() {
       </div>
 
       <p className="mt-8 text-center text-xs text-gray-400">Copyright © 2024 - All right reserved by <a href="https://x.com/iHunterDev" target="_blank">@iHunterDev</a></p>
-      <p className="mt-1 text-center text-xs text-gray-400">Version: v0.1.1</p>
+      <p className="mt-1 text-center text-xs text-gray-400">Version: v0.1.2</p>
     </div>
   );
 }

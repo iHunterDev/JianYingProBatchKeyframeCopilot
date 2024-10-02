@@ -38,7 +38,7 @@ func NewConfigStore() (*ConfigStore, error) {
 	}
 	return &ConfigStore{
 		configPath:     configFilePath,
-		currentVersion: "0.1.1",
+		currentVersion: "0.1.2",
 	}, nil
 }
 
